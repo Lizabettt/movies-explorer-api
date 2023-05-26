@@ -47,4 +47,6 @@ const errorWithoutStatus = require('./middlewares/errorWithoutStatus');
 
 app.use(errorWithoutStatus);
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`SERVER START. PORT => ${PORT}`);
+});

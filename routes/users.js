@@ -1,7 +1,6 @@
 const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-// eslint-disable-next-line
-const regURL = /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
+
 const {
   getUserMy,
   changeUserData,
@@ -16,7 +15,7 @@ userRouter.patch(
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30).required(),
-      about: Joi.string().min(2).max(30).required(),
+      email: Joi.string().required().email(),
     }),
   }),
   changeUserData,

@@ -1,7 +1,7 @@
 const movieRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-// eslint-disable-next-line
-const regURL =/^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
+
+const regURL = /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
 const {
   createMovie,
   getMovies,
@@ -9,15 +9,15 @@ const {
 } = require('../controllers/movies');
 
 // возвращает все сохранённые текущим  пользователем фильмы
-cardRouter.get('/', getMovies);
+movieRouter.get('/', getMovies);
 
 // запрос на отправление фильма в бд
-cardRouter.post(
+movieRouter.post(
   '/',
   celebrate({
     body: Joi.object().keys({
       nameRU: Joi.string().required(),
-      nameRU: Joi.string().required(),
+      nameEN: Joi.string().required(),
       trailerLink: Joi.string().required().regex(regURL).required(),
       country: Joi.string().required(),
       director: Joi.string().required(),
@@ -33,8 +33,8 @@ cardRouter.post(
 );
 
 // запрос на удаление фильма из бд
-cardRouter.delete(
-  '/:id',
+movieRouter.delete(
+  '/:movieId',
   celebrate({
     params: Joi.object().keys({
       movieId: Joi.string().hex().length(24),

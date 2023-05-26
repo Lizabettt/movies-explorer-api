@@ -70,16 +70,6 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-
-  // likes: {
-  //   type: [mongoose.Schema.Types.ObjectId],
-  //   ref: 'user',
-  //   default: [],
-  // },
-  // createdAt: {
-  //   type: Date,
-  //   default: Date.now,
-  // },
 });
 
 module.exports = mongoose.model('movie', movieSchema);

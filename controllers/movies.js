@@ -13,7 +13,6 @@ const createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
     thumbnail,
     movieId,
   } = req.body;
@@ -28,10 +27,10 @@ const createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
     thumbnail,
     movieId,
-    owner })
+    owner,
+  })
     .then((newMovie) => res.status(201).send(newMovie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -47,7 +46,6 @@ const createMovie = (req, res, next) => {
 // получение всех фильмов
 const getMovies = (req, res, next) => {
   Movie.find({})
-   // .populate(['owner', 'likes'])
     .then((movie) => res.send(movie.reverse()))
     .catch(next);
 };
@@ -80,7 +78,6 @@ const deleteMovie = (req, res, next) => {
       next(err);
     });
 };
-
 
 module.exports = {
   createMovie,
