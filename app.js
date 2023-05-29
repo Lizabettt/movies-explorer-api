@@ -3,15 +3,14 @@ require('dotenv').config(); // env-переменные из файла .env д�
 const express = require('express');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT, MONGO_BD } = require('./utils/configuration');
 
 const mongoose = require('mongoose');
-
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb');
+mongoose.connect(MONGO_BD);
 
 const { errors } = require('celebrate');
 
-const rateLimit = require('express-rate-limit');
+
 const bodyParser = require('body-parser');
 const cors = require('./middlewares/cors');
 
@@ -26,11 +25,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 app.use(requestLogger);// за ним идут все обработчики роутов
 
-//  Чтобы защититься от множества автоматических запросов
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // за 15 минут
-  max: 100, // можно совершить максимум 100 запросов с одного IP
-});
+const limiter = require('./utils/rateLimit');
 app.use(limiter);// подключаем rate-limiter
 
 app.get('/crash-test', () => { // до роутов, сразу после логгера
