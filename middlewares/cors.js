@@ -4,8 +4,8 @@ const allowedCors = [
   'https://localhost:3000',
   'http://localhost:3005',
   'https://localhost:3005',
- 'http://api.diplom-kuskova.nomoredomains.rocks',
- 'https://api.diplom-kuskova.nomoredomains.rocks',
+  'http://api.diplom-kuskova.nomoredomains.rocks',
+  'https://api.diplom-kuskova.nomoredomains.rocks',
   'http://diplom-kuskova.nomoredomains.rocks',
   'https://diplom-kuskova.nomoredomains.rocks',
 ];
