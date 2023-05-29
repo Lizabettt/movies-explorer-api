@@ -10,5 +10,5 @@ const JWT = NODE_ENV === 'production' ? JWT_SECRET : 'JWT_SECRET';
 module.exports = {
   PORT,
   MONGO_BD,
-  JWT
+  JWT,
 };

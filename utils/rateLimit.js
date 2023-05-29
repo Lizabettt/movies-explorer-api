@@ -5,4 +5,4 @@ const limiter = rateLimit({
   max: 100, // можно совершить максимум 100 запросов с одного IP
 });
 
-module.exports =  limiter ;
+module.exports = limiter;

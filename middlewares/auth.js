@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      JWT
+      JWT,
     ); // попытаемся верифицировать токен
   } catch (err) {
     return next(new AuthorizationError('Необходима авторизация')); // отправим ошибку, если не получилось

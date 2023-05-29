@@ -1,32 +1,30 @@
 require('dotenv').config(); // env-переменные из файла .env добавятся в process.env ; .env вгит игнор добавить
-
+const helmet = require('helmet');
 const express = require('express');
 
 const app = express();
-const { PORT, MONGO_BD } = require('./utils/configuration');
-
 const mongoose = require('mongoose');
-mongoose.connect(MONGO_BD);
-
-const { errors } = require('celebrate');
-
-
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
+const limiter = require('./utils/rateLimit');
 const cors = require('./middlewares/cors');
-
-app.use(cors);
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const {
+  requestLogger,
+  errorLogger,
+} = require('./middlewares/logger');
 
 const router = require('./routes');
+const { PORT, MONGO_BD } = require('./utils/configuration');
+const errorWithoutStatus = require('./middlewares/errorWithoutStatus');
 
-const { requestLogger, errorLogger } = require('./middlewares/logger');
+mongoose.connect(MONGO_BD);
 
+app.use(cors);
+app.use(helmet());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);// за ним идут все обработчики роутов
-
-const limiter = require('./utils/rateLimit');
-app.use(limiter);// подключаем rate-limiter
+app.use(limiter);
 
 app.get('/crash-test', () => { // до роутов, сразу после логгера
   setTimeout(() => {
@@ -37,9 +35,6 @@ app.get('/crash-test', () => { // до роутов, сразу после ло�
 app.use(router);
 app.use(errorLogger);
 app.use(errors());
-
-const errorWithoutStatus = require('./middlewares/errorWithoutStatus');
-
 app.use(errorWithoutStatus);
 
 app.listen(PORT, () => {
