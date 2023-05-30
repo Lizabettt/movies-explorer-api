@@ -3,36 +3,41 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
 const { Conflict, BadRequest, NotFound } = require('../errors');
+const {
+  conflictErrorText,
+  badRequestErrorText,
+  notFoundErrorText,
+} = require('../utils/consts');
 
 const { JWT_SECRET, NODE_ENV } = process.env;
 
 // создание пользователя
 const createUser = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then((hash) => {
-    User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: hash,
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => {
+      User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: hash,
+      })
+        .then((newUser) => res.status(201).send({
+          name: newUser.name,
+          email: newUser.email,
+          _id: newUser._id,
+        }))
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new Conflict(conflictErrorText));
+            return;
+          }
+          if (err.name === 'ValidationError') {
+            next(new BadRequest(badRequestErrorText));
+            return;
+          }
+          next(err);
+        });
     })
-      .then((newUser) => res.status(201).send({
-        name: newUser.name,
-        email: newUser.email,
-        _id: newUser._id,
-      }))
-      .catch((err) => {
-        if (err.code === 11000) {
-          next(
-            new Conflict('Пользователь с такими данными уже зарегистрирован'),
-          );
-          return;
-        }
-        if (err.name === 'ValidationError') {
-          next(new BadRequest('Ошибка заполнения поля'));
-          return;
-        }
-        next(err);
-      });
-  })
     .catch(next);
 };
 
@@ -58,7 +63,7 @@ const getUserMy = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFound('Пользователь по указанному _id не найден'));
+        next(new NotFound(notFoundErrorText));
         return;
       }
       res.send(user);
@@ -76,16 +81,17 @@ const changeUserData = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        next(new NotFound('Пользователь по указанному _id не найден'));
+        next(new NotFound(notFoundErrorText));
         return;
       }
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(
-          new BadRequest('Переданы некорректные данные при обновлении профиля'),
-        );
+      if (err.code === 11000) {
+        next(new Conflict(conflictErrorText));
+        return;
+      } if (err.name === 'ValidationError') {
+        next(new BadRequest(badRequestErrorText));
         return;
       }
       next(err);
