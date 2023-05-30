@@ -48,7 +48,9 @@ const createMovie = (req, res, next) => {
 
 // получение всех фильмов текущего пользователя
 const getMovies = (req, res, next) => {
-  Movie.find({ owner: req.user._id })
+  Movie.find({
+    owner: req.user._id
+  })
     .then((movie) => res.send(movie.reverse()))
     .catch(next);
 };
